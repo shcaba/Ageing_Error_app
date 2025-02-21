@@ -36,7 +36,7 @@ function(input, output, session) {
     
   observeEvent(input$run_ageerr,{
     Data.in<-read.csv(input$file$datapath)
-    browser()
+    #Copy the agemat executable to chosen directory
     file.copy(from = file.path(paste0(main.dir,"/agemat.exe")), to =  file.path(paste0(selected_dir(),"/agemat.exe")), overwrite = TRUE)
     
     Nreaders <- dim(Data.in)[2]
@@ -117,7 +117,6 @@ function(input, output, session) {
       Aic = 2*Nll + 2*Df
       Aicc = Aic + 2*Df*(Df+1)/(n-Df-1)
       Bic = 2*Nll + Df*log(n)
-      browser()
       run.name<-model.name[i]
       model.aic[i,]<-c(run.name,Aic,Aicc,Bic)
     }
