@@ -3,17 +3,19 @@
 
 library(shiny)
 library(AgeingError)
+library(shinyFiles)
+library(DT)
+library(bslib)
 
 # Define UI for application that draws a histogram
 ui <- function(request) {
   shinyUI(fluidPage(
 
     # Application title
-    titlePanel("Ageing error"),
+    titlePanel("Create ageing error matrix for use in Stock Synthesis"),
     h4(p(strong("This tool uses the ", tags$a(href = "https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html","ageing error code", target = "_blank"), "developed by Andre Punt"))),
-    h5(p("Any suggested changes or requests? Please submit an issue with the recommendation", tags$a(href = "https://github.com/shcaba/SS-DL-tool/issues", "here", target = "_blank"))),
-    
-    # Sidebar with a slider input for number of bins
+
+    # 
     sidebarLayout(
         sidebarPanel(
           h4(strong("Choose data file")),
@@ -26,11 +28,36 @@ ui <- function(request) {
                                                   ".csv"
                                                 )
           ))),
-        ), 
+          
+          h5(strong("Choose folder to retain model results")),
+          h5(em("")),
+          shinyDirButton(
+            id = "AgeErr_dir",
+            label = "Select directory",
+            title = "Choose folder to put results and plots"
+          ),
+          br(),
+          
+          actionButton("run_ageerr", strong("Run Ageing Error"),
+                       width = "100%",
+                       icon("circle-play"),
+                       style = "font-size:120%;border:2px solid;color:#FFFFFF;background:#5D9741"),
+          
+          ), 
 
         # Show a plot of the generated distribution
         mainPanel(
-          plotOutput("oneoneplot")
+          layout_columns(
+            card(
+            card_header("1:1 plot"),
+            plotOutput("oneoneplot")
+          ),
+          card(
+            card_header("Model selection table"),
+            DTOutput("aic_table")
+          )
+          ),
+          
         )
     )
 ))}
