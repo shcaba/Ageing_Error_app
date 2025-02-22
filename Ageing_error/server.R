@@ -114,9 +114,9 @@ function(input, output, session) {
       Df = as.numeric(scan(paste(DateFile,"agemat.par",sep=""),comment.char="%", what="character", quiet=TRUE)[6])
       Nll = as.numeric(scan(paste(DateFile,"agemat.par",sep=""),comment.char="%", what="character", quiet=TRUE)[11])
       n = sum(ifelse(Reads2[,-1]==-999,0,1))
-      Aic = 2*Nll + 2*Df
-      Aicc = Aic + 2*Df*(Df+1)/(n-Df-1)
-      Bic = 2*Nll + Df*log(n)
+      Aic = round(2*Nll + 2*Df,0)
+      Aicc = round(Aic + 2*Df*(Df+1)/(n-Df-1),0)
+      Bic = round(2*Nll + Df*log(n),0)
       run.name<-model.name[i]
       model.aic[i,]<-c(run.name,Aic,Aicc,Bic)
     }
@@ -128,9 +128,11 @@ function(input, output, session) {
     
     output$oneoneplot<-renderPlot(
     {
-      ggplot(Reads2,aes(Reader1,Reader3))+
+      oneoneplot<-ggplot(Reads2,aes(Reader1,Reader3))+
         geom_point(aes(size=count))+
         geom_abline(intercept=0,slope=1,col="red",lwd=1.1)
+      ggsave(paste(selected_dir(),"/","1_1_plot.png",sep=""),oneoneplot,width=10,height=10,units="in")
+      oneoneplot
     })
     
     

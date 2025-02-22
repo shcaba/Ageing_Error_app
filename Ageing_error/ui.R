@@ -47,7 +47,7 @@ ui <- function(request) {
 
         # Show a plot of the generated distribution
         mainPanel(
-          layout_columns(
+          layout_column_wrap(
             card(
             card_header("1:1 plot"),
             plotOutput("oneoneplot")
@@ -55,7 +55,8 @@ ui <- function(request) {
           card(
             card_header("Model selection table"),
             DTOutput("aic_table")
-          )
+          ),
+          col_widths = c(3/4,3/4)
           ),
           
         )
