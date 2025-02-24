@@ -69,7 +69,8 @@ function(input, output, session) {
     
     #Set up matrix dimensions
     MinAge <- 1
-    MaxAge <- max(ceiling(max(Reads2[,2:(Nreaders+1)])/10)*10)
+    MaxAge <- 100
+    #MaxAge <- max(ceiling(max(Reads2[,2:(Nreaders+1)])/10)*10)
     KnotAges = list(NA, NA)  # Necessary for option 5 or 6
     #Set up the bias and precision options for each model
     BiasOpt.mat = SigOpt.mat =matrix(0,9,Nreaders)
@@ -96,6 +97,7 @@ function(input, output, session) {
     model.aic<-as.data.frame(matrix(NA,9,4))
     colnames(model.aic)<-c("Run","AIC","AICc","BIC")
     model.name<-c("B0_S1","B0_S2","B0_S3","B1_S1","B1_S2","B1_S3","B2_S1","B2_S2","B2_S3","B3_S1","B3_S2","B3_S3")
+    biasvar.output.list<-list()
     
     #Run ageing error for each of the 9 models
     for(i in 1:9)
@@ -119,9 +121,23 @@ function(input, output, session) {
       Bic = round(2*Nll + Df*log(n),0)
       run.name<-model.name[i]
       model.aic[i,]<-c(run.name,Aic,Aicc,Bic)
+      #Capture bias and variance estimates
+      #browser()
+      bias.var.out<-readLines(paste0(DateFile,"/agemat.rep")) #read in rep file
+      bias.var.out.df<-as.data.frame(bias.var.out[(grep("Reader Age CV SD Expected age",bias.var.out)+1):(grep("Estimated age-structure by data set",bias.var.out)-2)]) #find the bias/var output in rep and make a data file
+      bias.var.out.df.list<-mapply(function(x) as.numeric(strsplit(bias.var.out.df[x,],split=" ")[[1]]),x=1:dim(bias.var.out.df)[1],SIMPLIFY=FALSE) #change each line to be a number from character
+      bias.var.out.df.num<-data.frame(do.call("rbind", bias.var.out.df.list)) #convert from list into matrix
+      colnames.temp<-strsplit(bias.var.out[grep("Reader Age CV SD Expected age",bias.var.out)],split=" ")[[1]] #add header names
+      colnames(bias.var.out.df.num)<-colnames.temp[-length(colnames.temp)]
+      colnames(bias.var.out.df.num)[length(colnames(bias.var.out.df.num))]<-"Exp ages"
+      bias.var.out.df.num$Model<-model.name[i] #add model name
+      biasvar.output.list[[i]]<-bias.var.out.df.num #put into output list
     }
+    #browser()
+    biasvar.output.ggplot<-do.call("rbind", biasvar.output.list) #make results into an object for ggplot
     
     #setwd(paste0(SourceFile,"/",folder.names[xx]))
+    save(biasvar.output.ggplot,file=paste(selected_dir(),"/","age_err_output.dmp",sep=""))
     save(model.aic,file=paste(selected_dir(),"/","model_selection.dmp",sep=""))
   
     
