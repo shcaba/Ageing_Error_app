@@ -37,11 +37,22 @@ ui <- function(request) {
             title = "Choose folder to put results and plots"
           ),
           br(),
+          br(),
+          
+          fluidRow(
+            #column(width = 6, numericInput("min_age", "Minimum age", value = NA, min = 0, max = 10000, step = 0.001)),
+            column(width = 6, numericInput("max_age", "Maximum age of vector calculations", value = 100, min = 0, max = 10000, step = 0.01))
+          ),
+          
+          
+          br(),
+          br(),
+          
           
           actionButton("run_ageerr", strong("Run Ageing Error"),
-                       width = "100%",
+                       width = "50%",
                        icon("circle-play"),
-                       style = "font-size:120%;border:2px solid;color:#FFFFFF;background:#5D9741"),
+                       style = "font-size:120%;border:2px solid;color:#FFFFFF;background:#005595"),
           
           ), 
 
@@ -50,7 +61,7 @@ ui <- function(request) {
           layout_column_wrap(
             card(
             card_header("1:1 plot"),
-            plotOutput("oneoneplot")
+            plotlyOutput("oneoneplot")
           ),
           card(
             card_header("Model selection table"),
@@ -59,6 +70,26 @@ ui <- function(request) {
           col_widths = c(3/4,3/4)
           ),
           
+          br(),
+          br(),
+          br(),
+          br(),
+          
+          layout_column_wrap(
+            card(
+              card_header("Bias plot"),
+              plotlyOutput("biasplot")
+            ),
+            card(
+              card_header("CV plot"),
+              plotlyOutput("CVplot")
+            ),
+            card(
+              card_header("SD plot"),
+              plotlyOutput("SDplot")
+            ),
+            col_widths = c(3/4,3/4)
+          ),
         )
     )
 ))}

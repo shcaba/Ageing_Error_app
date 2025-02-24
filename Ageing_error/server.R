@@ -12,6 +12,8 @@ library(data.table)
 library(AgeingError)
 library(ggplot2)
 library(shinyFiles)
+library(shinybusy)
+library(plotly)
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
@@ -35,6 +37,7 @@ function(input, output, session) {
   })
     
   observeEvent(input$run_ageerr,{
+    show_modal_spinner(spin="fingerprint",color="#5D9741",text="Making ageing error calculations")
     Data.in<-read.csv(input$file$datapath)
     #Copy the agemat executable to chosen directory
     file.copy(from = file.path(paste0(main.dir,"/agemat.exe")), to =  file.path(paste0(selected_dir(),"/agemat.exe")), overwrite = TRUE)
@@ -69,7 +72,7 @@ function(input, output, session) {
     
     #Set up matrix dimensions
     MinAge <- 1
-    MaxAge <- 100
+    MaxAge <- input$max_age
     #MaxAge <- max(ceiling(max(Reads2[,2:(Nreaders+1)])/10)*10)
     KnotAges = list(NA, NA)  # Necessary for option 5 or 6
     #Set up the bias and precision options for each model
@@ -108,7 +111,7 @@ function(input, output, session) {
       BiasOpt =BiasOpt.mat[i,]
       SigOpt = SigOpt.mat[i,]
       RunFn(Data=Reads2, SigOpt=SigOpt,KnotAges=KnotAges, BiasOpt=BiasOpt,
-            NDataSets=1, MinAge=MinAge, MaxAge=MaxAge, RefAge=10,
+            NDataSets=1, MinAge=MinAge, MaxAge=MaxAge, RefAge=round(round(0.25*(MaxAge)),0),
             MinusAge=2, PlusAge=25,
             SaveFile=DateFile,
             AdmbFile= main.dir, EffSampleSize=0, Intern=FALSE,
@@ -129,7 +132,7 @@ function(input, output, session) {
       bias.var.out.df.num<-data.frame(do.call("rbind", bias.var.out.df.list)) #convert from list into matrix
       colnames.temp<-strsplit(bias.var.out[grep("Reader Age CV SD Expected age",bias.var.out)],split=" ")[[1]] #add header names
       colnames(bias.var.out.df.num)<-colnames.temp[-length(colnames.temp)]
-      colnames(bias.var.out.df.num)[length(colnames(bias.var.out.df.num))]<-"Exp ages"
+      colnames(bias.var.out.df.num)[length(colnames(bias.var.out.df.num))]<-"Exp_ages"
       bias.var.out.df.num$Model<-model.name[i] #add model name
       biasvar.output.list[[i]]<-bias.var.out.df.num #put into output list
     }
@@ -137,30 +140,77 @@ function(input, output, session) {
     biasvar.output.ggplot<-do.call("rbind", biasvar.output.list) #make results into an object for ggplot
     
     #setwd(paste0(SourceFile,"/",folder.names[xx]))
-    save(biasvar.output.ggplot,file=paste(selected_dir(),"/","age_err_output.dmp",sep=""))
-    save(model.aic,file=paste(selected_dir(),"/","model_selection.dmp",sep=""))
+    save(biasvar.output.ggplot,file=paste0(selected_dir(),"/","age_err_output.rds"))
+    write.csv(biasvar.output.ggplot,file=paste0(selected_dir(),"/","age_err_output.csv"))
+    save(model.aic,file=paste0(selected_dir(),"/","model_selection.rds"))
+    write.csv(model.aic,file=paste0(selected_dir(),"/","model_selection.csv"))
+    
   
+    #Create 1:1 plot
+    output$oneoneplot<-renderPlotly(
+      {
+        oneoneplot<-ggplot(Reads2,aes(Reader1,Reader3))+
+          geom_point(aes(size=count))+
+          geom_abline(intercept=0,slope=1,col="red",lwd=1.1)
+        ggsave(paste(selected_dir(),"/","1_1_plot.png",sep=""),oneoneplot,width=10,height=10,units="in")
+        ggplotly(oneoneplot)
+      })
+
+    #Create bias plot
+    output$biasplot<-renderPlotly(
+      {
+        biasplot<-ggplot(biasvar.output.ggplot,aes(Age,Exp_ages,color=Model))+
+          geom_line()+
+          facet_wrap(vars(Reader))+
+          ylab("Expected Age")+
+          ylim(0,MaxAge+round(0.25*MaxAge,0))+
+          theme_bw()+
+          theme(legend.position="bottom")
+        ggsave(paste(selected_dir(),"/","bias_plot.png",sep=""),biasplot,width=10,height=10,units="in")
+        ggplotly(biasplot)
+      }
+    )
     
+    #Create CV plot
+    output$CVplot<-renderPlotly(
+      {
+        CVplot<-ggplot(biasvar.output.ggplot,aes(Age,CV,color=Model))+
+          geom_line()+
+          facet_wrap(vars(Reader))+
+          ylab("Coefficient of Variation")+
+          ylim(0,quantile(biasvar.output.ggplot$CV,0.95))+
+          theme_bw()+
+          theme(legend.position="bottom")
+        ggsave(paste(selected_dir(),"/","CV_plot.png",sep=""),CVplot,width=10,height=10,units="in")
+        ggplotly(CVplot)
+      }
+    )
+
+    #Create SD plot
+    output$SDplot<-renderPlotly(
+      {
+        SDplot<-ggplot(biasvar.output.ggplot,aes(Age,SD,color=Model))+
+          geom_line()+
+          facet_wrap(vars(Reader))+
+          ylab("Standard Deviation")+
+          ylim(0,quantile(biasvar.output.ggplot$SD,0.95))+
+          theme_bw()+
+          theme(legend.position="bottom")
+        ggsave(paste(selected_dir(),"/","SD_plot.png",sep=""),SDplot,width=10,height=10,units="in")
+        ggplotly(SDplot)
+      }
+    )
     
-    output$oneoneplot<-renderPlot(
-    {
-      oneoneplot<-ggplot(Reads2,aes(Reader1,Reader3))+
-        geom_point(aes(size=count))+
-        geom_abline(intercept=0,slope=1,col="red",lwd=1.1)
-      ggsave(paste(selected_dir(),"/","1_1_plot.png",sep=""),oneoneplot,width=10,height=10,units="in")
-      oneoneplot
-    })
-    
-    
+    #Create model selection table
     output$aic_table <- renderDT({
       datatable(model.aic,
                 options = list(pageLength = 10,
                                scrollX = TRUE),
                 rownames = TRUE)
     })
-    
+    remove_modal_spinner()
   }
   ) #End ObserveEvent
-
+ 
   
 }
