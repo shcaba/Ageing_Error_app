@@ -14,10 +14,16 @@ ui <- function(request) {
     # Application title
     titlePanel("Create ageing error matrix for use in Stock Synthesis"),
     h4(p(strong("This tool uses the ", tags$a(href = "https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html","ageing error code", target = "_blank"), "developed by Andre Punt"))),
-
-    # 
+    h4(p(strong(("The required input are double reads of an ageing structure, This program will convert that simple format into the format needed by the ageing error function and write the data file, then run the function and produce output, model selection results, and plots and output objects.")))),
+    h4(p(strong(("The bias and precision vectors can be retrieved from age_err_output.csv or age_err_output.rds.")))),
+          # 
     sidebarLayout(
         sidebarPanel(
+          h4(strong("Need an example data file? Click the below button")),
+          downloadButton("downloadData", "Download Example data CSV"),
+          br(),
+          br(),
+          
           h4(strong("Choose data file")),
           fluidRow(column(width = 12, fileInput("file", "Multiple reads file",
                                                 accept = c(
@@ -88,7 +94,7 @@ ui <- function(request) {
               card_header("SD plot"),
               plotlyOutput("SDplot")
             ),
-            col_widths = c(3/4,3/4)
+            col_widths = c(3/4,3/4,3/4)
           ),
         )
     )

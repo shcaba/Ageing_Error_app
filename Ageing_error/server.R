@@ -18,7 +18,16 @@ library(plotly)
 # Define server logic required to draw a histogram
 function(input, output, session) {
   
-  #Data.in <- reactiveValues(data = NULL,clear = FALSE)
+  
+  output$downloadData <- downloadHandler(
+    filename = function(){"Example_data.csv"},
+    content = function(file) 
+      {
+      file.copy("Example_data.csv", file)
+      }
+  )
+  
+    #Data.in <- reactiveValues(data = NULL,clear = FALSE)
   reactive({
     req(input$file)
   })
@@ -145,13 +154,14 @@ function(input, output, session) {
     save(model.aic,file=paste0(selected_dir(),"/","model_selection.rds"))
     write.csv(model.aic,file=paste0(selected_dir(),"/","model_selection.csv"))
     
-  
     #Create 1:1 plot
     output$oneoneplot<-renderPlotly(
       {
-        oneoneplot<-ggplot(Reads2,aes(Reader1,Reader3))+
+        oneoneplot<-ggplot(Reads2,aes(Reads2[,2],Reads2[,3]))+
           geom_point(aes(size=count))+
-          geom_abline(intercept=0,slope=1,col="red",lwd=1.1)
+          geom_abline(intercept=0,slope=1,col="red",lwd=1.1)+
+          xlab(colnames(Reads2)[2])+
+          ylab(colnames(Reads2)[3])
         ggsave(paste(selected_dir(),"/","1_1_plot.png",sep=""),oneoneplot,width=10,height=10,units="in")
         ggplotly(oneoneplot)
       })
