@@ -14,7 +14,9 @@ ui <- function(request) {
     # Application title
     titlePanel("Create ageing error matrix for use in Stock Synthesis"),
     h4(p(strong("This tool uses the ", tags$a(href = "https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html","ageing error code", target = "_blank"), "developed by Andre Punt"))),
-    h4(p(strong(("The required input are double reads of an ageing structure, This program will convert that simple format into the format needed by the ageing error function and write the data file, then run the function and produce output, model selection results, and plots and output objects.")))),
+    h4(p(strong(("The required input are double reads of an ageing structure.")))),
+    h4(p(strong(("This program will convert that simple format into the format needed by the ageing error function and write the data file.")))),
+    h4(p(strong(("Then new data file will then run in the ageing error function and produce output, model selection results, and plots and output objects.")))),
     h4(p(strong(("The bias and precision vectors can be retrieved from age_err_output.csv or age_err_output.rds.")))),
           # 
     sidebarLayout(
