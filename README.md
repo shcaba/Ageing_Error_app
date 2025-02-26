@@ -11,8 +11,10 @@ if (any(installed_packages == FALSE)) {
   install.packages(packages[!installed_packages], dependencies = TRUE)
 }
 
-For the ageing error package, use one of the following installation commands
+For the ageing error package, use one of the following installation commands:
+
 install.packages("AgeingError", repos = c("https://noaa-fisheries-integrated-toolbox.r-universe.dev", "https://cloud.r-project.org"))
+
 remotes::install_github("pfmc-assessments/AgeingError")
 
 ```
