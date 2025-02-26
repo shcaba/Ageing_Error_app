@@ -17,14 +17,14 @@ remotes::install_github("pfmc-assessments/AgeingError")
 
 ```
 
-# Running the SS-DL tool
+# Running the Ageing Error App
 
 Running the tool can be accomplished in the following way:
 
-1. Access the repository [Ageing_Error_app](https://github.com/shcaba/Ageing_Error_app)
+1. Access the repository [Ageing_Error_app](https://github.com/shcaba/Ageing_Error_app), click the green code button and choose "Dowload zip" option. 
 
 
-2. Extract the folder **Ageing_Error_app-main** and open the `server.r` or `ui.r` file 
+2. Extract the downloaded folder **Ageing_Error_app-main** and open the `server.r` or `ui.r` file in RStudio. 
 
 **Obs.** Before running the first time, open both `server.r` and `ui.r` files to make sure all packages are installed. If any package is not installed, RStudio will signal..
 
@@ -34,6 +34,6 @@ I recommend using the "`Run External`" option within the "`Run App`" button
 (see small arrow in button to change options)
 
 
-3. The Shiny will open and you can begin using the app
+3. The application will open and you can begin using it.
 
 
