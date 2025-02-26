@@ -1,4 +1,4 @@
-# Ageing_Error_app
+# Ageing Error Application to develop ageing error matrices for Stock Synthesis and other uses
 Ageing error shiny app using the TMB-based ageing error code from Andre Punt (https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html) 
 
 # Installing libraries 
