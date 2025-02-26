@@ -21,7 +21,7 @@ remotes::install_github("pfmc-assessments/AgeingError")
 
 Running the tool can be accomplished in the following way:
 
-1. Access the repository [Ageing_Error_app](https://github.com/shcaba/Ageing_Error_app), click the green code button and choose "Dowload zip" option. 
+1. Access the repository [Ageing_Error_app](https://github.com/shcaba/Ageing_Error_app), click the `green code button` and choose `Download zip` option. 
 
 
 2. Extract the downloaded folder **Ageing_Error_app-main** and open the `server.r` or `ui.r` file in RStudio. 
