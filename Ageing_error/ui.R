@@ -6,11 +6,14 @@ library(AgeingError)
 library(shinyFiles)
 library(DT)
 library(bslib)
+library(shinyWidgets)
 
 # Define UI for application that draws a histogram
 ui <- function(request) {
   shinyUI(fluidPage(
-
+    
+    setBackgroundImage(src = "sablefish_otolith.jpg"),  
+    
     # Application title
     titlePanel("Create ageing error matrix for use in Stock Synthesis"),
     h4(p(strong("This tool uses the ", tags$a(href = "https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html","ageing error code", target = "_blank"), "developed by Andre Punt"))),
@@ -44,18 +47,30 @@ ui <- function(request) {
             label = "Select directory",
             title = "Choose folder to put results and plots"
           ),
+          
+          br(),
+          br(),
+          
+          h5(strong("Choose ageing error approach")),
+          awesomeRadio(
+            inputId = "AgeErr_option",
+            label = "",
+            choices = c("ADMB", "TMB"),
+            selected = "TMB",
+            inline = TRUE,
+            status = "success"
+          ),
+          
           br(),
           br(),
           
           fluidRow(
             #column(width = 6, numericInput("min_age", "Minimum age", value = NA, min = 0, max = 10000, step = 0.001)),
-            column(width = 6, numericInput("max_age", "Maximum age of vector calculations", value = 100, min = 0, max = 10000, step = 0.01))
+            column(width = 4, numericInput("max_age", "Maximum age of vector calculations", value = 100, min = 0, max = 10000, step = 0.01))
           ),
           
-          
           br(),
           br(),
-          
           
           actionButton("run_ageerr", strong("Run Ageing Error"),
                        width = "50%",

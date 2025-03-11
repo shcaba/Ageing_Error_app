@@ -1,0 +1,11 @@
+Range_of_ages
+1 100
+
+Data_set_1
+1                                 # numbers of lines
+2                                 # readers
+1 100 25                          # minus group; plus group; reference age
+
+   1  2
+1  1  1
+-999 -999
