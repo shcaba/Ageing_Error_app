@@ -113,7 +113,7 @@ model.name<-c("B00_S11","B00_S12","B00_S13","B00_S21","B00_S22","B00_S23","B00_S
 
 ################
 #Write TMB data file
-AEdata.file<-function(Reads2,maxage)
+AEdata.file<-function(Reads2,maxage,data.tmb.path)
 {
   data.file.in<-readLines("C:/Users/Jason.Cope/Documents/Github/Ageing_Error_app/Ageing_error/data_temp.dat")
   end.data<-data.in[11]
@@ -122,7 +122,7 @@ AEdata.file<-function(Reads2,maxage)
   data.file.in[7]<-paste("1",maxage,maxage/4)
   
   data.file.in[10:(10+(dim(Reads2)[1]-1))]<-apply(Reads2,1,paste,collapse=" ")
-  data.file.in[10:97]<-apply(Reads2,1,paste,collapse=" ")[1:88]
+  #data.file.in[10:97]<-apply(Reads2,1,paste,collapse=" ")[1:88]
   data.file.in[10+(dim(Reads2)[1])]<-end.data
   
   writeLines(data.file.in,con="C:/Users/Jason.Cope/Documents/Github/Ageing_Error_app/Ageing_error/update.dat")
@@ -176,9 +176,9 @@ for(i in 1:length(model.name))
       Model.select[i,2:4]<- as.numeric(test_out$ModelSelection) 
     }
     Model.select[i,1]<-model.name[i]
-    write.csv(Model.select,file.path(data.dir.in,"Model_select.csv"))
-    save(Model.select,file.path(data.dir.in,"Model_select.rds"))
 }
+write.csv(Model.select,file.path(data.dir.in,"Model_select.csv"))
+save(Model.select,file.path(data.dir.in,"Model_select.rds"))
 
 
 
