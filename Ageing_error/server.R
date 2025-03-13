@@ -144,7 +144,7 @@ function(input, output, session) {
     
     if(input$AgeErr_option=="ADMB")
     {  
-      if(file.exists(paste(selected_dir(),"/ADMB_files/",sep=""))){unlink(list.files(paste(selected_dir(),"/ADMB_files/",sep="")),recursive=TRUE,force=TRUE)}
+      #if(file.exists(paste(selected_dir(),"/ADMB_files/",sep=""))){unlink(list.files(paste(selected_dir(),"/ADMB_files/",sep="")),recursive=TRUE,force=TRUE)}
       if(!file.exists(paste(selected_dir(),"/ADMB_files/",sep=""))){dir.create(paste(selected_dir(),"/ADMB_files/",sep=""))}
       file.copy(from = file.path(paste0(main.dir,"/ADMB_files/agemat.exe")), to =  file.path(paste0(selected_dir(),"/ADMB_files/agemat.exe")), overwrite = TRUE)
       #Set up matrix dimensions
@@ -332,7 +332,7 @@ function(input, output, session) {
                                                DataSpecs = run_dat, verbose = TRUE)
           
           test_mod <- try(AgeingError::DoApplyAgeError(
-            Species = "Yours",
+            Species = "Species",
             DataSpecs = run_dat,
             ModelSpecsInp = run_spc,
             AprobWght = 1e-06,
@@ -342,7 +342,7 @@ function(input, output, session) {
           
           if(class(test_mod)!="try-error")
           {
-            results_out <- AgeingError::ProcessResults(Species = "test", SaveDir = file.path(getwd(), paste0("TMB_Results_",model.name[i])), CalcEff = TRUE, verbose = FALSE)
+            results_out <- AgeingError::ProcessResults(Species = "Species", SaveDir = file.path(getwd(), paste0("TMB_Results_",model.name[i])), CalcEff = TRUE, verbose = FALSE)
             Model.select[i,2:4]<- as.numeric(results_out$ModelSelection) 
           }
           Model.select[i,1]<-model.name[i]
