@@ -12,16 +12,31 @@ library(shinyWidgets)
 ui <- function(request) {
   shinyUI(fluidPage(
     
-    setBackgroundImage(src = "sablefish_otolith.jpg"),  
-    
+    setBackgroundImage(
+      src = "sablefish_otolith.jpg"
+    ),
+
     # Application title
-    titlePanel("Create ageing error matrix for use in Stock Synthesis"),
-    h4(p(strong("This tool uses the ", tags$a(href = "https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html","ageing error code", target = "_blank"), "developed by Andre Punt"))),
-    h4(p(strong(("The required input are double reads of an ageing structure.")))),
-    h4(p(strong(("This program will convert that simple format into the format needed by the ageing error function and write the data file.")))),
-    h4(p(strong(("Then new data file will then run in the ageing error function and produce output, model selection results, and plots and output objects.")))),
-    h4(p(strong(("The bias and precision vectors can be retrieved from age_err_output.csv or age_err_output.rds.")))),
-          # 
+    titlePanel("Create an ageing error matrix for use in Stock Synthesis"),
+    h4(p(strong(("There are two modelling options to run the ageing error")))),
+    tags$ul(
+      tags$li("The original ADMB version written by ", tags$a(href = "https://cdnsciencepub.com/doi/10.1139/F08-111","Andre Punt", target = "_blank"), "and updated by ", tags$a(href = "https://github.com/pfmc-assessments/AgeingError","Jim Thorson", target = "_blank")),
+      tags$li("A TMB version adapted by Kelli Johnson and described in this ", tags$a(href = "https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html","vignette.", target = "_blank")),
+    ),
+    h4(p(strong(("The required input are double reads of an ageing structure. See downloadble example data file for more details.")))),
+    #h4(p(strong(("This program will convert that simple format into the format needed by the ageing error function and write the data file.")))),
+    #h4(p(strong(("Then new data file will then run in the ageing error version of choice and produce output, model selection results, and plots and output objects.")))),
+    #h4(p(strong(("Model selection criteria can be used to choose which model for bias and precision is best supported by the data.")))),
+    h4(p(strong("Up to 27 models of different bias (B) and sigma (S, which provides precision) combinations for Readers 1 and 2 are run, and model selection criteria provided. The description of options are found in the ", tags$a(href = "https://pfmc-assessments.github.io/AgeingError/articles/getting_started.html", "vignette.", target = "_blank")))),
+    h4(p(strong(("Model naming convention example using B01_S12: B01 means bias option 0 for Reader 1 and 1 for Reader 2; S12 sigma option 1 for Reader 1 and 2 for Reader 2.")))),
+    h4(p(strong(("Model output includes")))),
+    tags$ul(
+      tags$li("FormattedReads.csv is the formatted data file used in the ageing error functions"),
+      tags$li("Bias and precision vectors can be retrieved in the ADMB folder (age_err_output.csv and .rds), or in the individual folders of the TMB models"),
+      tags$li("Model selection tables (Model_select.csv and .rds) "),
+      tags$li("Agreement (i.e., 1:1), bias and precision plots"),
+    ),
+    # 
     sidebarLayout(
         sidebarPanel(
           h4(strong("Need an example data file? Click the below button")),

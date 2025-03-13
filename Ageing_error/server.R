@@ -140,7 +140,7 @@ function(input, output, session) {
           geom_abline(intercept=0,slope=1,col="red",lwd=1.1)+
           xlab(colnames(Reads2)[2])+
           ylab(colnames(Reads2)[3])
-        ggsave(paste(selected_dir(),"/ADMB_files/1_1_plot.png",sep=""),oneoneplot,width=10,height=10,units="in")
+        ggsave(paste(selected_dir(),"/1_1_plot.png",sep=""),oneoneplot,width=10,height=10,units="in")
         ggplotly(oneoneplot)
       })
     
