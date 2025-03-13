@@ -8,6 +8,8 @@ library(ggplot2)
 library(shinyFiles)
 library(shinybusy)
 library(plotly)
+library(shinyWidgets)
+
 
 ################################################################################
 ####################### FUNCTIONS ##############################################
@@ -95,40 +97,31 @@ function(input, output, session) {
   observeEvent(input$run_ageerr,{
     show_modal_spinner(spin="fingerprint",color="#5D9741",text="Making ageing error calculations")
 
-    model.name<-c("B00_S11","B00_S12","B00_S13","B00_S21","B00_S22","B00_S23","B00_S31","B00_S32","B00_S33",
+    model.name.vec<-c("B00_S11","B00_S12","B00_S13","B00_S21","B00_S22","B00_S23","B00_S31","B00_S32","B00_S33",
                   "B01_S11","B01_S12","B01_S13","B01_S21","B01_S22","B01_S23","B01_S31","B01_S32","B01_S33",
                   "B02_S11","B02_S12","B02_S13","B02_S21","B02_S22","B02_S23","B02_S31","B02_S32","B02_S33")
     
+#    output$Model_picks<-renderUI({
+#      pickerInput(
+#        inputId = "myPicker",
+#        label = "Choose models to run",
+#        choices = c("B00_S11","B00_S12","B00_S13","B00_S21","B00_S22","B00_S23","B00_S31","B00_S32","B00_S33",
+#                    "B01_S11","B01_S12","B01_S13","B01_S21","B01_S22","B01_S23","B01_S31","B01_S32","B01_S33",
+#                    "B02_S11","B02_S12","B02_S13","B02_S21","B02_S22","B02_S23","B02_S31","B02_S32","B02_S33"),
+#        options = list(
+#          `actions-box` = TRUE,
+#          size = 12,
+#          `selected-text-format` = "count > 3"
+#        ),
+#        multiple = TRUE
+#      )
+#    })
+
+      model.name<-input$myPicker
+      model.name.index<-which(model.name.vec%in%input$myPicker)
+
     #    Data.in<-read.csv(input$file$datapath)
     #Copy the agemat executable to chosen directory
-    
-#    Nreaders <- dim(Data.in)[2]
-
-    #Create data file needed by ageing error function
-    #This is count of the read combinations by readers
-#    Reads2 = data.frame(count=1, Data.in[1,])
-    
-#    for(RowI in 2:nrow(Data.in)){
-#      DupRow <- NA
-      # loop over all previous rows looking for duplicates of the current row
-#      for(PreviousRowJ in 1:nrow(Reads2)){
-        # if all values match, take note of previous row number
-#        if(all(Data.in[RowI,1:Nreaders]==
-#               Reads2[PreviousRowJ,1:Nreaders+1])){
-#          DupRow = PreviousRowJ
-#        }
-#      }
-      # if no duplicate found, add new row
-#      if(is.na(DupRow)){
-        # Add new row to ChinaReads2
-#        Reads2 <- rbind(Reads2, data.frame(count=1, Data.in[RowI,]))
-#      }
-      # if duplicate found, increment count
-#      if(!is.na(DupRow)){
-        # Increment number of samples for the previous duplicate
-#        Reads2[DupRow,1] <- Reads2[DupRow,1] + 1
-#      }
-#    }
     
     Reads2<-AEdata_convert(input$file$datapath,paste0(selected_dir(),"/FormattedReads.csv"))
     
@@ -151,7 +144,8 @@ function(input, output, session) {
     
     if(input$AgeErr_option=="ADMB")
     {  
-      dir.create(paste(selected_dir(),"/ADMB_files/",sep=""))
+      if(file.exists(paste(selected_dir(),"/ADMB_files/",sep=""))){unlink(list.files(paste(selected_dir(),"/ADMB_files/",sep="")),recursive=TRUE,force=TRUE)}
+      if(!file.exists(paste(selected_dir(),"/ADMB_files/",sep=""))){dir.create(paste(selected_dir(),"/ADMB_files/",sep=""))}
       file.copy(from = file.path(paste0(main.dir,"/ADMB_files/agemat.exe")), to =  file.path(paste0(selected_dir(),"/ADMB_files/agemat.exe")), overwrite = TRUE)
       #Set up matrix dimensions
       MinAge <- 1
@@ -159,75 +153,76 @@ function(input, output, session) {
       #MaxAge <- max(ceiling(max(Reads2[,2:(Nreaders+1)])/10)*10)
       KnotAges = list(NA, NA)  # Necessary for option 5 or 6
       #Set up the bias and precision options for each model
-      BiasOpt.mat = SigOpt.mat =matrix(0,27,Nreaders)
-      BiasOpt.mat[1,] =  c(0,0)
-      BiasOpt.mat[2,] =  c(0,0)
-      BiasOpt.mat[3,] =  c(0,0)
-      BiasOpt.mat[4,] =  c(0,0)
-      BiasOpt.mat[5,] =  c(0,0)
-      BiasOpt.mat[6,] =  c(0,0)
-      BiasOpt.mat[7,] =  c(0,0)
-      BiasOpt.mat[8,] =  c(0,0)
-      BiasOpt.mat[9,] =  c(0,0)
-      BiasOpt.mat[10,] =  c(0,1)
-      BiasOpt.mat[11,] =  c(0,1)
-      BiasOpt.mat[12,] =  c(0,1)
-      BiasOpt.mat[13,] =  c(0,1)
-      BiasOpt.mat[14,] =  c(0,1)
-      BiasOpt.mat[15,] =  c(0,1)
-      BiasOpt.mat[16,] =  c(0,1)
-      BiasOpt.mat[17,] =  c(0,1)
-      BiasOpt.mat[18,] =  c(0,1)
-      BiasOpt.mat[19,] =  c(0,2)
-      BiasOpt.mat[20,] =  c(0,2)
-      BiasOpt.mat[21,] =  c(0,2)
-      BiasOpt.mat[22,] =  c(0,2)
-      BiasOpt.mat[23,] =  c(0,2)
-      BiasOpt.mat[24,] =  c(0,2)
-      BiasOpt.mat[25,] =  c(0,2)
-      BiasOpt.mat[26,] =  c(0,2)
-      BiasOpt.mat[27,] =  c(0,2)
+#      BiasOpt.mat = SigOpt.mat =matrix(0,27,Nreaders)
+      BiasOpt.mat = SigOpt.mat =list()
+      BiasOpt.mat[[1]] =  c(0,0)
+      BiasOpt.mat[[2]] =  c(0,0)
+      BiasOpt.mat[[3]] =  c(0,0)
+      BiasOpt.mat[[4]] =  c(0,0)
+      BiasOpt.mat[[5]] =  c(0,0)
+      BiasOpt.mat[[6]] =  c(0,0)
+      BiasOpt.mat[[7]] =  c(0,0)
+      BiasOpt.mat[[8]] =  c(0,0)
+      BiasOpt.mat[[9]] =  c(0,0)
+      BiasOpt.mat[[10]] =  c(0,1)
+      BiasOpt.mat[[11]] =  c(0,1)
+      BiasOpt.mat[[12]] =  c(0,1)
+      BiasOpt.mat[[13]] =  c(0,1)
+      BiasOpt.mat[[14]] =  c(0,1)
+      BiasOpt.mat[[15]] =  c(0,1)
+      BiasOpt.mat[[16]] =  c(0,1)
+      BiasOpt.mat[[17]] =  c(0,1)
+      BiasOpt.mat[[18]] =  c(0,1)
+      BiasOpt.mat[[19]] =  c(0,2)
+      BiasOpt.mat[[20]] =  c(0,2)
+      BiasOpt.mat[[21]] =  c(0,2)
+      BiasOpt.mat[[22]] =  c(0,2)
+      BiasOpt.mat[[23]] =  c(0,2)
+      BiasOpt.mat[[24]] =  c(0,2)
+      BiasOpt.mat[[25]] =  c(0,2)
+      BiasOpt.mat[[26]] =  c(0,2)
+      BiasOpt.mat[[27]] =  c(0,2)
       
-      SigOpt.mat[1,] =c(1,1)
-      SigOpt.mat[2,] =c(1,2)
-      SigOpt.mat[3,] =c(1,3)
-      SigOpt.mat[4,] =c(2,2)
-      SigOpt.mat[5,] =c(2,2)
-      SigOpt.mat[6,] =c(2,1)
-      SigOpt.mat[7,] =c(3,1)
-      SigOpt.mat[8,] =c(3,2)
-      SigOpt.mat[9,] =c(3,3)
-      SigOpt.mat[10,] =c(1,1)
-      SigOpt.mat[11,] =c(1,2)
-      SigOpt.mat[12,] =c(1,3)
-      SigOpt.mat[13,] =c(2,1)
-      SigOpt.mat[14,] =c(2,2)
-      SigOpt.mat[15,] =c(2,3)
-      SigOpt.mat[16,] =c(3,1)
-      SigOpt.mat[17,] =c(3,2)
-      SigOpt.mat[18,] =c(3,3)
-      SigOpt.mat[19,] =c(1,1)
-      SigOpt.mat[20,] =c(1,2)
-      SigOpt.mat[21,] =c(1,3)
-      SigOpt.mat[22,] =c(2,1)
-      SigOpt.mat[23,] =c(2,2)
-      SigOpt.mat[24,] =c(2,3)
-      SigOpt.mat[25,] =c(3,1)
-      SigOpt.mat[26,] =c(3,2)
-      SigOpt.mat[27,] =c(3,3)
+      SigOpt.mat[[1]] =c(1,1)
+      SigOpt.mat[[2]] =c(1,2)
+      SigOpt.mat[[3]] =c(1,3)
+      SigOpt.mat[[4]] =c(2,2)
+      SigOpt.mat[[5]] =c(2,2)
+      SigOpt.mat[[6]] =c(2,1)
+      SigOpt.mat[[7]] =c(3,1)
+      SigOpt.mat[[8]] =c(3,2)
+      SigOpt.mat[[9]] =c(3,3)
+      SigOpt.mat[[10]] =c(1,1)
+      SigOpt.mat[[11]] =c(1,2)
+      SigOpt.mat[[12]] =c(1,3)
+      SigOpt.mat[[13]] =c(2,1)
+      SigOpt.mat[[14]] =c(2,2)
+      SigOpt.mat[[15]] =c(2,3)
+      SigOpt.mat[[16]] =c(3,1)
+      SigOpt.mat[[17]] =c(3,2)
+      SigOpt.mat[[18]] =c(3,3)
+      SigOpt.mat[[19]] =c(1,1)
+      SigOpt.mat[[20]] =c(1,2)
+      SigOpt.mat[[21]] =c(1,3)
+      SigOpt.mat[[22]] =c(2,1)
+      SigOpt.mat[[23]] =c(2,2)
+      SigOpt.mat[[24]] =c(2,3)
+      SigOpt.mat[[25]] =c(3,1)
+      SigOpt.mat[[26]] =c(3,2)
+      SigOpt.mat[[27]] =c(3,3)
       
-      Model.select<-as.data.frame(matrix(NA,27,4))
+      Model.select<-as.data.frame(matrix(NA,length(model.name),4))
       colnames(Model.select)<-c("Run","AIC","AICc","BIC")
       biasvar.output.list<-list()
       
-      #Run ageing error for each of the 9 models
-      for(i in 1:dim(SigOpt.mat)[1])
+      #Run ageing error for selected models
+      for(i in 1:length(model.name))
       {
         setwd(selected_dir())
         DateFile = paste(getwd(),"/ADMB_files/",model.name[i],"/",sep="")
         dir.create(DateFile)
-        BiasOpt =BiasOpt.mat[i,]
-        SigOpt = SigOpt.mat[i,]
+        BiasOpt =BiasOpt.mat[[model.name.index[i]]]
+        SigOpt = SigOpt.mat[[model.name.index[i]]]
         RunFn(Data=Reads2, SigOpt=SigOpt,KnotAges=KnotAges, BiasOpt=BiasOpt,
               NDataSets=1, MinAge=MinAge, MaxAge=MaxAge, RefAge=round(round(0.25*(MaxAge)),0),
               MinusAge=2, PlusAge=25,
@@ -243,7 +238,6 @@ function(input, output, session) {
         run.name<-model.name[i]
         Model.select[i,]<-c(run.name,Aic,Aicc,Bic)
         #Capture bias and variance estimates
-        #browser()
         bias.var.out<-readLines(paste0(DateFile,"/agemat.rep")) #read in rep file
         bias.var.out.df<-as.data.frame(bias.var.out[(grep("Reader Age CV SD Expected age",bias.var.out)+1):(grep("Estimated age-structure by data set",bias.var.out)-2)]) #find the bias/var output in rep and make a data file
         bias.var.out.df.list<-mapply(function(x) as.numeric(strsplit(bias.var.out.df[x,],split=" ")[[1]]),x=1:dim(bias.var.out.df)[1],SIMPLIFY=FALSE) #change each line to be a number from character
@@ -335,10 +329,10 @@ function(input, output, session) {
         for(i in 1:length(model.name))
         {
           run_spc <- AgeingError::CreateSpecs(file.path(getwd(), paste0("spc/data_",model.name[i],".spc")),
-                                               DataSpecs = test_dat, verbose = TRUE)
+                                               DataSpecs = run_dat, verbose = TRUE)
           
           test_mod <- try(AgeingError::DoApplyAgeError(
-            Species = "test",
+            Species = "Yours",
             DataSpecs = run_dat,
             ModelSpecsInp = run_spc,
             AprobWght = 1e-06,
@@ -363,7 +357,7 @@ function(input, output, session) {
       datatable(Model.select,
                      options = list(pageLength = 10,
                                     scrollX = TRUE),
-                     rownames = TRUE)  
+                                    rownames = TRUE)
     })
     
     

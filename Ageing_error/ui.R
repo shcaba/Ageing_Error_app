@@ -12,6 +12,10 @@ library(shinyWidgets)
 ui <- function(request) {
   shinyUI(fluidPage(
     
+    tags$style(HTML(".dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+                    color: #3368ff"
+                    )),
+                    
     setBackgroundImage(
       src = "sablefish_otolith.jpg"
     ),
@@ -74,6 +78,20 @@ ui <- function(request) {
             selected = "TMB",
             inline = TRUE,
             status = "success"
+          ),
+          
+          pickerInput(
+            inputId = "myPicker",
+            label = "Choose models to run",
+            choices = c("B00_S11","B00_S12","B00_S13","B00_S21","B00_S22","B00_S23","B00_S31","B00_S32","B00_S33",
+                        "B01_S11","B01_S12","B01_S13","B01_S21","B01_S22","B01_S23","B01_S31","B01_S32","B01_S33",
+                        "B02_S11","B02_S12","B02_S13","B02_S21","B02_S22","B02_S23","B02_S31","B02_S32","B02_S33"),
+            options = list(
+              `actions-box` = TRUE,
+              size = 12,
+              `selected-text-format` = "count > 3"
+            ),
+            multiple = TRUE
           ),
           
           br(),
