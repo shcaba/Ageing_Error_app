@@ -13,8 +13,7 @@ ui <- function(request) {
   shinyUI(fluidPage(
     
     tags$style(HTML(".dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-                    color: #3368ff"
-                    )),
+                    color: #ffffff")),
                     
     setBackgroundImage(
       src = "sablefish_otolith.jpg"
@@ -121,7 +120,8 @@ ui <- function(request) {
           ),
           card(
             card_header("Model selection table"),
-            DTOutput("aic_table")
+            DTOutput("aic_table"),
+            tags$head(tags$style("#aic_table table {background-color: white; }", media="screen", type="text/css"))
           ),
           col_widths = c(3/4,3/4)
           ),

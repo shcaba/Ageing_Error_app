@@ -343,7 +343,7 @@ function(input, output, session) {
           if(class(test_mod)!="try-error")
           {
             results_out <- AgeingError::ProcessResults(Species = "Species", SaveDir = file.path(getwd(), paste0("TMB_Results_",model.name[i])), CalcEff = TRUE, verbose = FALSE)
-            Model.select[i,2:4]<- as.numeric(results_out$ModelSelection) 
+            Model.select[i,2:4]<- round(as.numeric(results_out$ModelSelection),2) 
           }
           Model.select[i,1]<-model.name[i]
         }
