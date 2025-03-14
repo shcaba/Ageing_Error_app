@@ -7,7 +7,7 @@ Ageing error shiny app using the TMB-based ageing error code from Andre Punt (ht
 Use the below code to check to make sure you have the needed libraries:
 
 packages<-c("shiny","shinyFiles","ggplot2","DT","bslib",
-"data.table","shinybusy","plotly","remotes")
+"data.table","shinybusy","plotly","remotes","shinyWidgets")
 
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {

@@ -1,6 +1,6 @@
 # reader BiasOpt SigmaOpt 
        1       0        1            
-       2       2       -1            
+       2       2        1            
        
 Bias_Pars (low high init, on/off)  
 0.001 200 1 1  
@@ -9,4 +9,4 @@ Bias_Pars (low high init, on/off)
 
 Sigma_Pars (low high init, on/off)  
 0.001 100 1 1
-
+0.001 100 1 1
