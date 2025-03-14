@@ -80,6 +80,7 @@ function(input, output, session) {
   reactive({
     req(input$file)
   })
+  x<-1
   main.dir<-getwd()
   volumes <- c(Home = fs::path_home())
   shinyDirChoose(input, "AgeErr_dir", roots = volumes, session = session)
@@ -95,8 +96,8 @@ function(input, output, session) {
   })
     
   observeEvent(input$run_ageerr,{
-    show_modal_spinner(spin="fingerprint",color="#5D9741",text="Making ageing error calculations")
-
+    show_modal_spinner(spin="fingerprint",color="#5D9741",text=paste0("Making ageing error calculations for ",x," of ",length(input$myPicker)," total model runs"))
+    
     model.name.vec<-c("B00_S11","B00_S12","B00_S13","B00_S21","B00_S22","B00_S23","B00_S31","B00_S32","B00_S33",
                   "B01_S11","B01_S12","B01_S13","B01_S21","B01_S22","B01_S23","B01_S31","B01_S32","B01_S33",
                   "B02_S11","B02_S12","B02_S13","B02_S21","B02_S22","B02_S23","B02_S31","B02_S32","B02_S33")
@@ -218,6 +219,7 @@ function(input, output, session) {
       #Run ageing error for selected models
       for(i in 1:length(model.name))
       {
+        x<-i
         setwd(selected_dir())
         DateFile = paste(getwd(),"/ADMB_files/",model.name[i],"/",sep="")
         dir.create(DateFile)
@@ -315,7 +317,7 @@ function(input, output, session) {
 #      dir.create(paste(selected_dir(),"/TMB_files/",sep=""))
       file.copy(from = file.path(paste0(main.dir,"/TMB_files")), to =  file.path(paste0(selected_dir())), recursive=TRUE,overwrite = TRUE)
       
-      Model.select<-data.frame(matrix(NA,27,4))
+      Model.select<-data.frame(matrix(NA,length(model.name),4))
       colnames(Model.select)<-c("Model","AIC","AICc","BIC")
       
       #Create TMB data file
@@ -328,6 +330,7 @@ function(input, output, session) {
         
         for(i in 1:length(model.name))
         {
+          x<-i
           run_spc <- AgeingError::CreateSpecs(file.path(getwd(), paste0("spc/data_",model.name[i],".spc")),
                                                DataSpecs = run_dat, verbose = TRUE)
           

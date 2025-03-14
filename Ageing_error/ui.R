@@ -47,38 +47,46 @@ ui <- function(request) {
           br(),
           br(),
           
-          h4(strong("Choose data file")),
-          fluidRow(column(width = 12, fileInput("file", "Multiple reads file",
+         fluidRow(column(width=6,h4(strong("Choose data file "))),
+                 column(width=6,h4(strong("Choose folder to retain model results")))),
+         
+          fluidRow(column(width=6, fileInput("file", NULL,
                                                 accept = c(
                                                   "text/csv",
                                                   "text/comma-separated-values",
                                                   "text/tab-separated-values",
                                                   "text/plain",
                                                   ".csv"
-                                                )
-          ))),
+                                                ))),
+                  column(width=6),          
+                  shinyDirButton(
+                    id = "AgeErr_dir",
+                    label = "Select results directory",
+                    title = "Results folder")
+                   ),
           
-          h5(strong("Choose folder to retain model results")),
-          h5(em("")),
-          shinyDirButton(
-            id = "AgeErr_dir",
-            label = "Select directory",
-            title = "Choose folder to put results and plots"
-          ),
+          #h5(strong("Choose folder to retain model results")),
+          #h5(em("")),
+ #         shinyDirButton(
+#            id = "AgeErr_dir",
+#            label = "Select model results directory",
+#            title = "Choose folder to retain results and plots"
+#          ),
           
-          br(),
-          br(),
+#          br(),
+#          br(),
           
-          h5(strong("Choose ageing error approach")),
-          awesomeRadio(
+          #h5(strong("Choose ageing error approach")),
+          fluidRow(column(width=6,
+            awesomeRadio(
             inputId = "AgeErr_option",
-            label = "",
+            label = "Choose ageing error approach",
             choices = c("ADMB", "TMB"),
             selected = "TMB",
             inline = TRUE,
             status = "success"
-          ),
-          
+          )),
+          column(width=6,
           pickerInput(
             inputId = "myPicker",
             label = "Choose models to run",
@@ -91,21 +99,18 @@ ui <- function(request) {
               `selected-text-format` = "count > 3"
             ),
             multiple = TRUE
-          ),
-          
-          br(),
-          br(),
-          
+          ))),
+        
           fluidRow(
             #column(width = 6, numericInput("min_age", "Minimum age", value = NA, min = 0, max = 10000, step = 0.001)),
-            column(width = 4, numericInput("max_age", "Maximum age of vector calculations", value = 100, min = 0, max = 10000, step = 0.01))
+            column(width = 5, numericInput("max_age", "Maximum age of vector calculations", value = 100, min = 0, max = 1000, step = 1))
           ),
           
-          br(),
-          br(),
+         # br(),
+        #  br(),
           
           actionButton("run_ageerr", strong("Run Ageing Error"),
-                       width = "50%",
+                       width = "100%",
                        icon("circle-play"),
                        style = "font-size:120%;border:2px solid;color:#FFFFFF;background:#005595"),
           
