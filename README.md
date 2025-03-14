@@ -41,4 +41,6 @@ I recommend using the "`Run External`" option within the "`Run App`" button
 
 3. The application will open and you can begin using it.
 
-
+You can also run from the downloaded files directly in R using:
+library(Shiny)
+runApp('~/Github/Ageing_Error_app/Ageing_error') where the path is the path to the folder that has the downloaded files from GitHub.
