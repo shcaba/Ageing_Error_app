@@ -96,7 +96,6 @@ function(input, output, session) {
   })
     
   observeEvent(input$run_ageerr,{
-    show_modal_spinner(spin="fingerprint",color="#5D9741",text=paste0("Making ageing error calculations for ",x," of ",length(input$myPicker)," total model runs"))
     
     model.name.vec<-c("B00_S11","B00_S12","B00_S13","B00_S21","B00_S22","B00_S23","B00_S31","B00_S32","B00_S33",
                   "B01_S11","B01_S12","B01_S13","B01_S21","B01_S22","B01_S23","B01_S31","B01_S32","B01_S33",
@@ -219,7 +218,8 @@ function(input, output, session) {
       #Run ageing error for selected models
       for(i in 1:length(model.name))
       {
-        x<-i
+        show_modal_spinner(spin="fingerprint",color="#5D9741",text=paste0("Making ageing error calculations for ",i," of ",length(input$myPicker)," total model runs"))
+                
         setwd(selected_dir())
         DateFile = paste(getwd(),"/ADMB_files/",model.name[i],"/",sep="")
         dir.create(DateFile)
@@ -330,7 +330,7 @@ function(input, output, session) {
         
         for(i in 1:length(model.name))
         {
-          x<-i
+          show_modal_spinner(spin="fingerprint",color="#5D9741",text=paste0("Making ageing error calculations for ",i," of ",length(input$myPicker)," total model runs"))
           run_spc <- AgeingError::CreateSpecs(file.path(getwd(), paste0("spc/data_",model.name[i],".spc")),
                                                DataSpecs = run_dat, verbose = TRUE)
           
