@@ -148,7 +148,7 @@ function(input, output, session) {
       if(!file.exists(paste(selected_dir(),"/ADMB_files/",sep=""))){dir.create(paste(selected_dir(),"/ADMB_files/",sep=""))}
       file.copy(from = file.path(paste0(main.dir,"/ADMB_files/agemat.exe")), to =  file.path(paste0(selected_dir(),"/ADMB_files/agemat.exe")), overwrite = TRUE)
       #Set up matrix dimensions
-      MinAge <- 1
+      MinAge <- 0
       MaxAge <- input$max_age
       #MaxAge <- max(ceiling(max(Reads2[,2:(Nreaders+1)])/10)*10)
       KnotAges = list(NA, NA)  # Necessary for option 5 or 6
@@ -227,7 +227,7 @@ function(input, output, session) {
         SigOpt = SigOpt.mat[[model.name.index[i]]]
         RunFn(Data=Reads2, SigOpt=SigOpt,KnotAges=KnotAges, BiasOpt=BiasOpt,
               NDataSets=1, MinAge=MinAge, MaxAge=MaxAge, RefAge=round(round(0.25*(MaxAge)),0),
-              MinusAge=2, PlusAge=25,
+              MinusAge=MinAge+1, PlusAge=MaxAge-1,
               SaveFile=DateFile,
               AdmbFile= file.path(paste0(selected_dir(),"/ADMB_files")), EffSampleSize=0, Intern=FALSE,
               JustWrite=FALSE) #,ExtraArgs=" -ams 2341577272 -est")
