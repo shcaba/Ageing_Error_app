@@ -7,6 +7,7 @@ library(shinyFiles)
 library(DT)
 library(bslib)
 library(shinyWidgets)
+library(plotly)
 
 # Define UI for application that draws a histogram
 ui <- function(request) {
