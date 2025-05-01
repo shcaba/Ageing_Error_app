@@ -275,7 +275,7 @@ function(input, output, session) {
       save(biasvar.output.ggplot,file=paste0(selected_dir(),"/ADMB_files/age_err_output.rds"))
       write.csv(biasvar.output.ggplot,file=paste0(selected_dir(),"/ADMB_files/age_err_output.csv"))
       save(Model.select,file=paste0(selected_dir(),"/ADMB_files/model_selection.rds"))
-      write.csv(Model.select,file=paste0(selected_dir(),"/ADMB_files/model_selection.csv"))
+      write.csv(Model.select,file=paste0(selected_dir(),"/ADMB_files/Model_selection_ADMB.csv"))
       
       #Create bias plot
       output$biasplot<-renderPlotly(
@@ -368,8 +368,8 @@ function(input, output, session) {
           }
           Model.select[i,1]<-model.name[i]
         }
-        write.csv(Model.select,file.path(getwd(),"Model_select.csv"))
-        save(Model.select,file=file.path(getwd(),"Model_select.rds"))
+        write.csv(Model.select,file.path(getwd(),"Model_select_TMB.csv"))
+        save(Model.select,file=file.path(getwd(),"Model_select_TMB.rds"))
       }
    
     #Create model selection table
